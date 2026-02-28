@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shipment Admin | SKY EXPRESS</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body { padding: 30px 20px; background: #f0f2f5; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .admin-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 300px 1fr; gap: 25px; }
+    
+    /* Sidebar / Search */
+    .sidebar { background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); height: fit-content; border: 1px solid #e1e4e8; }
+    .search-group { background: #f0f7ff; padding: 15px; border-radius: 10px; border: 1px solid #d1e3ff; }
+    
+    /* Main Content Cards */
+    .card { background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #e1e4e8; }
+    .card-title { font-family: 'Outfit', sans-serif; font-size: 1.3rem; margin-bottom: 20px; color: var(--navy); border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    
+    /* Form Grid */
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 700; color: #576574; margin-bottom: 5px; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px; font-size: 0.9rem; }
+    
+    /* Progress Table */
+    .progress-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .progress-table th { background: #28a745; color: white; padding: 12px; text-align: left; font-size: 0.9rem; }
+    .progress-table td { padding: 10px; border: 1px solid #dee2e6; }
+    .btn-add { background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: 600; }
+    
+    /* ==========================================
+       MOBILE RESPONSIVE FIXES (ADDED)
+       ========================================== */
+    @media (max-width: 992px) { 
+        .admin-container { grid-template-columns: 1fr; } 
+    }
+
+    @media (max-width: 768px) {
+        body { padding: 15px 10px; }
+        .card { padding: 20px 15px; }
+        .form-grid { grid-template-columns: 1fr; } /* Stack inputs vertically */
+        .form-group.full-width { grid-column: span 1; }
+
+        /* Transform Table into Cards for Mobile */
+        .progress-table thead { display: none; } /* Hide headers */
+        .progress-table, .progress-table tbody, .progress-table tr, .progress-table td { 
+            display: block; 
+            width: 100%; 
+        }
+        .progress-table tr { 
+            margin-bottom: 20px; 
+            border: 1px solid #28a745; 
+            border-radius: 10px; 
+            padding: 10px;
+            background: #fdfdfd;
+        }
+        .progress-table td { 
+            border: none; 
+            padding: 5px 0; 
+            position: relative;
+            padding-left: 85px; /* Space for labels */
+        }
+        /* Add labels before inputs */
+        .progress-table td::before {
+            position: absolute;
+            left: 0;
+            font-weight: 800;
+            font-size: 0.7rem;
+            color: #28a745;
+            text-transform: uppercase;
+            top: 15px;
+        }
+        .progress-table td:nth-of-type(1)::before { content: "Date:"; }
+        .progress-table td:nth-of-type(2)::before { content: "Time:"; }
+        .progress-table td:nth-of-type(3)::before { content: "Location:"; }
+        .progress-table td:nth-of-type(4)::before { content: "Activity:"; }
+        .progress-table td:nth-of-type(5) { padding-left: 0; text-align: right; border-top: 1px solid #eee; margin-top: 5px; }
+
+        .btn-main { width: 100% !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-container">
+    <aside class="sidebar">
+      <h3 style="margin-bottom:15px; font-family:'Outfit';">Shipment Admin</h3>
+      <div class="search-group">
+        <label style="font-size:0.8rem; font-weight:800; color:#0061ff;">LOAD SHIPMENT</label>
+        <input type="text" id="searchId" placeholder="search AWB" style="margin: 10px 0;">
+        <button onclick="loadShipment()" class="btn-main" style="background:#ff7300; width:100%;">Load</button>
+      </div>
+      <a href="index.html" class="btn-outline" style="display:block; margin-top:20px; text-align:center; text-decoration:none; font-size:0.8rem;">Back to Home</a>
+    </aside>
+
+    <main>
+      <section class="card">
+        <h2 class="card-title">Shipment Details</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>AWB Number</label>
+            <input type="text" id="shipId" placeholder="SKY123456">
+          </div>
+          <div class="form-group">
+            <label>Booking Date</label>
+            <input type="date" id="bookingDate">
+          </div>
+          <div class="form-group">
+            <label>Consignee (Receiver)</label>
+            <input type="text" id="consignee" placeholder="Receiver Name">
+          </div>
+          <div class="form-group">
+            <label>Destination</label>
+            <input type="text" id="dest" placeholder="City, Country">
+          </div>
+          <div class="form-group">
+            <label>Sender (Shipper)</label>
+            <input type="text" id="sender" placeholder="Sender Name">
+          </div>
+          <div class="form-group">
+            <label>Delivery Date (Est.)</label>
+            <input type="date" id="deliveryDate">
+          </div>
+          <div class="form-group full-width" style="grid-column: span 2;">
+            <label>Current Status Summary</label>
+            <input type="text" id="currentSummary" placeholder="Auto-filled from latest update">
+          </div>
+        </div>
+        <button onclick="saveShipment()" class="btn-main" style="background:#28a745; margin-top:20px; width:auto; padding: 12px 30px;">Save / Update Shipment</button>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Tracking Progress</h2>
+        <table class="progress-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Location</th>
+              <th>Activity</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="progressBody">
+            </tbody>
+        </table>
+        <button class="btn-add" onclick="addRow()"><i class="fas fa-plus"></i> Add Progress</button>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Security check
+    if(sessionStorage.getItem('isAdmin') !== 'true') { window.location.href = 'login.html'; }
+
+    // Dynamic row management
+    function addRow(date='', time='', loc='', act='') {
+        const tbody = document.getElementById('progressBody');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><input type="date" class="p-date" value="${date}"></td>
+            <td><input type="time" class="p-time" value="${time}"></td>
+            <td><input type="text" class="p-loc" value="${loc}" placeholder="Location"></td>
+            <td><input type="text" class="p-act" value="${act}" placeholder="Activity"></td>
+            <td><button onclick="this.parentElement.parentElement.remove()" style="color:red; background:none; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+        `;
+        tbody.appendChild(row);
+    }
+
+    function saveShipment() {
+        const id = document.getElementById('shipId').value.toUpperCase().trim();
+        if(!id) return alert("AWB Number required!");
+
+        const progress = [];
+        document.querySelectorAll('#progressBody tr').forEach(row => {
+            progress.push({
+                date: row.querySelector('.p-date').value,
+                time: row.querySelector('.p-time').value,
+                loc: row.querySelector('.p-loc').value,
+                act: row.querySelector('.p-act').value
+            });
+        });
+
+        const shipmentData = {
+            bookingDate: document.getElementById('bookingDate').value,
+            consignee: document.getElementById('consignee').value,
+            dest: document.getElementById('dest').value,
+            sender: document.getElementById('sender').value,
+            deliveryDate: document.getElementById('deliveryDate').value,
+            status: document.getElementById('currentSummary').value,
+            history: progress
+        };
+
+        let db = JSON.parse(localStorage.getItem('skyExpressData')) || {};
+        db[id] = shipmentData;
+        localStorage.setItem('skyExpressData', JSON.stringify(db));
+        alert("Shipment " + id + " Updated!");
+        location.reload();
+    }
+
+    function loadShipment() {
+        const id = document.getElementById('searchId').value.toUpperCase().trim();
+        const db = JSON.parse(localStorage.getItem('skyExpressData')) || {};
+        const data = db[id];
+
+        if(!data) return alert("AWB not found!");
+
+        document.getElementById('shipId').value = id;
+        document.getElementById('bookingDate').value = data.bookingDate || '';
+        document.getElementById('consignee').value = data.consignee || '';
+        document.getElementById('dest').value = data.dest || '';
+        document.getElementById('sender').value = data.sender || '';
+        document.getElementById('deliveryDate').value = data.deliveryDate || '';
+        document.getElementById('currentSummary').value = data.status || '';
+
+        const tbody = document.getElementById('progressBody');
+        tbody.innerHTML = '';
+        if(data.history) data.history.forEach(h => addRow(h.date, h.time, h.loc, h.act));
+        alert("Data Loaded!");
+    }
+
+    // Default row
+    addRow();
+  </script>
+</body>
+</html>

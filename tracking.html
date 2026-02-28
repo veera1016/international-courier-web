@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shipment Status | SKY EXPRESS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Outfit:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  
+  <style>
+    :root {
+      --card-shadow: 0 20px 40px rgba(0,0,0,0.06);
+      --border-light: #f1f4f8;
+    }
+    body { background: #f8fbff; }
+    
+    .tracking-result-container { padding: 140px 0 80px; min-height: 90vh; }
+    
+    .status-card {
+      background: #ffffff;
+      padding: 50px;
+      border-radius: 35px;
+      box-shadow: var(--card-shadow);
+      max-width: 950px;
+      margin: 0 auto;
+      border-top: 12px solid var(--primary);
+      position: relative;
+    }
+
+    /* Header Styling */
+    .status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border-light);
+      padding-bottom: 30px;
+      margin-bottom: 40px;
+    }
+
+    /* Info Grid Styling */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+      padding: 30px;
+      background: #fcfdfe;
+      border-radius: 24px;
+      border: 1px solid var(--border-light);
+    }
+    .info-item small { 
+      display: block; 
+      color: #8395a7; 
+      font-weight: 800; 
+      text-transform: uppercase; 
+      font-size: 0.75rem; 
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .info-item span { font-weight: 800; color: var(--navy); font-size: 1.1rem; }
+
+    /* Current Status Badge */
+    .current-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 25px;
+      background: #f0f7ff;
+      color: var(--primary);
+      border-radius: 50px;
+      font-weight: 800;
+      margin-bottom: 30px;
+      border-left: 5px solid var(--primary);
+      font-size: 1.05rem;
+    }
+
+    /* Progress Table Styles */
+    .history-section h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      color: var(--navy);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .history-table { width: 100%; border-collapse: collapse; border-radius: 20px; overflow: hidden; }
+    .history-table th { background: var(--primary); color: white; padding: 18px; text-align: left; font-family: 'Outfit'; font-weight: 600; }
+    .history-table td { padding: 18px; background: white; border-bottom: 1px solid var(--border-light); color: var(--navy); font-size: 1rem; }
+    .history-table tr:hover td { background: #fdfdfe; }
+    .history-table tr:last-child td { border-bottom: none; }
+
+    @media (max-width: 768px) {
+      .status-card { padding: 30px 20px; border-radius: 25px; }
+      .info-grid { padding: 20px; gap: 20px; }
+      .history-table thead { display: none; }
+      .history-table td { 
+        display: block; 
+        padding: 12px 15px; 
+        border: none; 
+        text-align: right; 
+        position: relative;
+        padding-left: 40%;
+      }
+      .history-table td::before { 
+        content: attr(data-label); 
+        position: absolute; 
+        left: 15px; 
+        font-weight: 800; 
+        color: var(--primary); 
+        text-transform: uppercase; 
+        font-size: 0.7rem; 
+      }
+      .history-table tr { display: block; border-bottom: 2px solid var(--border-light); padding: 15px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header id="site-header">
+    <nav id="navbar" class="site-nav scrolled">
+      <div class="nav-inner centered-container">
+        <a class="brand" href="index.html">
+          <img src="assets/logo.png" alt="SKY EXPRESS logo" class="nav-logo" />
+          <div class="brand-text">
+            <span class="m-title">SKY EXPRESS</span>
+            <span class="s-title">INTERNATIONAL COURIERS</span>
+          </div>
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="tracking-result-container">
+    <div class="centered-container">
+      <div class="status-card">
+        
+        <div class="status-header">
+            <div>
+                <h2 id="display-id" style="margin:0; font-family:'Outfit'; color:var(--primary); font-size: 2.2rem;">Loading...</h2>
+                <p style="color:var(--accent); font-weight:800; margin:0; font-size:0.9rem; letter-spacing: 1px;">OFFICIAL SHIPMENT LEDGER</p>
+            </div>
+            <i class="fas fa-box-open" style="font-size: 3rem; color: #eef2f7;"></i>
+        </div>
+
+        <div id="loading-view" style="padding: 60px 0; text-align: center;">
+            <i class="fas fa-circle-notch fa-spin" style="font-size: 2.5rem; color: var(--primary);"></i>
+            <p style="margin-top: 20px; font-weight: 600; color: #576574;">Synchronizing with SKY EXPRESS global servers...</p>
+        </div>
+
+        <div id="content-view" style="display:none;">
+            <div class="info-grid">
+                <div class="info-item"><small>Booking Date</small><span id="res-date">--</span></div>
+                <div class="info-item"><small>Shipper (Sender)</small><span id="res-sender">--</span></div>
+                <div class="info-item"><small>Consignee (Receiver)</small><span id="res-consignee">--</span></div>
+                <div class="info-item"><small>Final Destination</small><span id="res-dest">--</span></div>
+            </div>
+
+            <div class="current-badge">
+                <i class="fas fa-satellite-dish"></i> <strong>Current Status:</strong> <span id="res-status">--</span>
+            </div>
+
+            <div class="history-section">
+                <h4><i class="fas fa-map-marked-alt"></i> Journey Timeline</h4>
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Location</th>
+                            <th>Activity Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="res-history"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="margin-top: 50px; text-align: center;">
+            <a href="index.html" class="btn-main" style="width: auto; padding: 18px 50px; box-shadow: 0 10px 20px rgba(0, 97, 255, 0.2);">
+                <i class="fas fa-search-location"></i> Track Another Shipment
+            </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer id="site-footer" style="padding: 50px 0; text-align: center; background: transparent;">
+    <small style="color: #8395a7; font-weight: 600;">© <span id="year"></span> SKY EXPRESS INTERNATIONAL COURIERS. All rights reserved.</small>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const trackId = (params.get('id') || "").toUpperCase().trim();
+      const db = JSON.parse(localStorage.getItem('skyExpressData')) || {};
+      
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      if (!trackId) {
+        document.getElementById('loading-view').innerHTML = `
+            <div style="color:#ff4757; font-weight:800; font-size:1.2rem;">MISSING TRACKING ID</div>
+            <p>Please return to the home page and enter your AWB number.</p>
+        `;
+        return;
+      }
+
+      document.getElementById('display-id').innerText = trackId;
+
+      // Professional delay for "database search" effect
+      setTimeout(() => {
+        const data = db[trackId];
+        document.getElementById('loading-view').style.display = 'none';
+
+        if (data) {
+            document.getElementById('content-view').style.display = 'block';
+            
+            // Populate Details
+            document.getElementById('res-date').innerText = data.bookingDate || 'In Review';
+            document.getElementById('res-sender').innerText = data.sender || '---';
+            document.getElementById('res-consignee').innerText = data.consignee || '---';
+            document.getElementById('res-dest').innerText = data.dest || 'International';
+            document.getElementById('res-status').innerText = data.status || 'Processing';
+
+            // Populate Timeline
+            const historyBody = document.getElementById('res-history');
+            if (data.history && data.history.length > 0) {
+                // Show most recent update at the top for better UX
+                [...data.history].reverse().forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td data-label="Date">${row.date || '---'}</td>
+                        <td data-label="Time">${row.time || '---'}</td>
+                        <td data-label="Location">${row.loc || '---'}</td>
+                        <td data-label="Activity"><strong>${row.act || '---'}</strong></td>
+                    `;
+                    historyBody.appendChild(tr);
+                });
+            } else {
+                historyBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 40px; color: #8395a7;">Shipment information is being prepared.</td></tr>';
+            }
+        } else {
+            document.getElementById('loading-view').style.display = 'block';
+            document.getElementById('loading-view').innerHTML = `
+                <div style="color:#ff4757; font-weight:800; font-size:1.5rem; margin-bottom:15px;">AWB NOT RECOGNIZED</div>
+                <p>We could not find records for <strong>${trackId}</strong>. <br>Please verify the number or contact our Visakhapatnam hub at <strong>+91 81215 92299</strong>.</p>
+            `;
+        }
+      }, 1200);
+    });
+  </script>
+</body>
+</html>
